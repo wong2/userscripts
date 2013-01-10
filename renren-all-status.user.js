@@ -24,7 +24,6 @@ function getParameter(key){
     return "";
 }
 
-debugger;
 var uid;
 uid = getParameter("id");
 if(uid==''){
