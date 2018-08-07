@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         豆瓣鱼
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  在豆瓣读书页面展示多抓鱼价格
 // @author       wong2
 // @match        https://book.douban.com/subject/*
