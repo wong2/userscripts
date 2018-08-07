@@ -11,8 +11,12 @@
 
 (function () {
 
-  var key = 'DkOliWvFNR7C4WvR'.split('').map(c => c.charCodeAt())
-  var iv = 'GQWKUE2CVGOOBKXU'.split('').map(c => c.charCodeAt())
+  var key = 'DkOliWvFNR7C4WvR'.split('').map(function(c) {
+    return c.charCodeAt()
+  })
+  var iv = 'GQWKUE2CVGOOBKXU'.split('').map(function(c) {
+    return c.charCodeAt()
+  })
   var aesCfb = new aesjs.ModeOfOperation.cfb(key, iv)
 
   function encrypt(text) {
