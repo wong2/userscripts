@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         豆瓣鱼
-// @namespace    http://tampermonkey.net/
-// @version      1.1
+// @namespace    wong2
+// @version      1.2
 // @description  在豆瓣读书页面展示多抓鱼价格
 // @author       wong2
 // @match        https://book.douban.com/subject/*
-// @require      https://cdn.jsdelivr.net/npm/aes-js@3.1.1/index.min.js
+// @match        https://www.duozhuayu.com/books/*
+// @require      https://cdn.jsdelivr.net/combine/npm/aes-js@3.1.1,npm/qrcode@1.2.2/build/qrcode.min.js
 // @grant        GM.xmlHttpRequest
 // ==/UserScript==
 
@@ -99,14 +100,43 @@
     sidebar.innerHTML = html + sidebar.innerHTML
   }
 
-  var title = document.querySelector('h1 span').innerText
-  var matches = document.getElementById('info').innerText.match(/\d{13}/)
-  var isbn = matches && matches[0]
+  function runInDoubanPage() {
+    var title = document.querySelector('h1 span').innerText
+    var matches = document.getElementById('info').innerText.match(/\d{13}/)
+    var isbn = matches && matches[0]
+    searchBook(title, isbn).then(function(book) {
+      if (book) {
+        showInSidebar(book)
+      }
+    })
+  }
 
-  searchBook(title, isbn).then(function(book) {
-    if (book) {
-      showInSidebar(book)
-    }
-  })
+  function replaceDuozhuayuQRCode() {
+    QRCode.toDataURL(location.href, function(err, dataUrl) {
+      var img = document.body.querySelector('.Modal-body img')
+      img.src = dataUrl
+    })
+  }
+
+  function runInDuozhuayuPage() {
+    var observer = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var nodes = mutations[i].addedNodes
+        for (var j = 0; j < nodes.length; j++) {
+          var node = nodes[j]
+          if (node.querySelector('.Modal-body')) {
+            return replaceDuozhuayuQRCode()
+          }
+        }
+      }
+    })
+    observer.observe(document.body, { childList: true })
+  }
+
+  if (/book.douban.com/.test(location.href)) {
+    runInDoubanPage()
+  } else {
+    runInDuozhuayuPage()
+  }
 
 })()
